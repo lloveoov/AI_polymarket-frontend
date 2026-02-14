@@ -1,4 +1,4 @@
-# AI_polymarket-frontend
+# AI Polymarket Frontend (Admin)
 
 ## Dev ops: role-based GitHub pushes (manager / code / qa)
 
