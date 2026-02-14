@@ -1,0 +1,45 @@
+name: QA Trigger
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  qa-notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get PR info
+        id: pr-info
+        run: |
+          echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          echo "url=${{ github.event.pull_request.html_url }}" >> $GITHUB_OUTPUT
+
+      - name: Set Telegram credentials
+        id: telegram-creds
+        run: |
+          if [ -n "${{ secrets.TELEGRAMBOTTOKEN }}" ]; then
+            echo "bot_token=${{ secrets.TELEGRAMBOTTOKEN }}" >> $GITHUB_OUTPUT
+            echo "chat_id=${{ secrets.TELEGRAMCHATID }}" >> $GITHUB_OUTPUT
+          else
+            echo "bot_token=${{ secrets.TELEGRAM_BOT_TOKEN }}" >> $GITHUB_OUTPUT
+            echo "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send Telegram message
+        if: steps.telegram-creds.outputs.bot_token != ''
+        run: |
+          MESSAGE="QA: please review PR #${{ steps.pr-info.outputs.number }} ${{ steps.pr-info.outputs.url }}"
+          curl -s -X POST "https://api.telegram.org/bot${{ steps.telegram-creds.outputs.bot_token }}/sendMessage" \
+            -d "chat_id=${{ steps.telegram-creds.outputs.chat_id }}" \
+            -d "text=${MESSAGE}"
+
+      - name: Request review from orion-qa
+        run: |
+          curl -s -X POST "https://api.github.com/repos/${{ github.repository }}/pulls/${{ steps.pr-info.outputs.number }}/requested_reviewers" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            -d '{"reviewers":["orion-qa"]}'
