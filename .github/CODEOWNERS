@@ -1,0 +1,5 @@
+# Require QA review for code changes
+/src/** @orion-qa
+
+# Docs can be approved by manager
+/docs/** @orion-manager
