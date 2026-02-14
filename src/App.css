@@ -12,10 +12,12 @@ body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, sans-s
 
 .app { max-width: 1120px; margin: 0 auto; padding: 20px; }
 .topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: rgba(14,20,33,.86); border: 1px solid var(--line); border-radius: 12px; backdrop-filter: blur(8px); }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
 .brand { font-weight: 800; letter-spacing: .2px; }
 nav { display: flex; gap: 18px; color: var(--muted); }
 nav a { cursor: pointer; }
 .connect { background: var(--accent); border: 0; color: white; padding: 10px 14px; border-radius: 10px; font-weight: 600; }
+.language-switcher { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 14px; cursor: pointer; }
 
 .hero { margin-top: 20px; background: linear-gradient(130deg, rgba(15,123,255,.2), rgba(15,123,255,.03)); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
 .hero h1 { margin: 0 0 8px; font-size: 30px; }

@@ -1,0 +1,37 @@
+{
+  "nav": {
+    "markets": "市场",
+    "portfolio": "投资组合",
+    "leaderboard": "排行榜",
+    "connectWallet": "连接钱包"
+  },
+  "hero": {
+    "title": "预测市场，实时情绪",
+    "subtitle": "受 Polymarket 启发的 UI，具有后端就绪架构。"
+  },
+  "stats": {
+    "totalMarkets": "市场总数",
+    "totalVolume": "总成交量"
+  },
+  "filters": {
+    "search": "搜索市场...",
+    "category": "分类"
+  },
+  "market": {
+    "ends": "结束于",
+    "volume": "成交量",
+    "liquidity": "流动性"
+  },
+  "categories": {
+    "all": "全部",
+    "crypto": "加密货币",
+    "ai": "人工智能",
+    "politics": "政治",
+    "sports": "体育"
+  },
+  "language": {
+    "switch": "语言",
+    "en": "English",
+    "zh": "中文"
+  }
+}
