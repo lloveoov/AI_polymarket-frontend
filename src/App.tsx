@@ -1,46 +1,52 @@
-import { useEffect, useMemo, useState } from 'react'
-import './App.css'
-import { marketApi } from './services/api'
-import type { Market } from './types/market'
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import './App.css';
+import { marketApi } from './services/api';
+import type { Market } from './types/market';
+import { LanguageSwitcher } from './components/LanguageSwitcher';
 
-const categories = ['All', 'Crypto', 'AI', 'Politics', 'Sports']
+const categoryKeys = ['all', 'crypto', 'ai', 'politics', 'sports'] as const;
 
 function App() {
-  const [markets, setMarkets] = useState<Market[]>([])
-  const [category, setCategory] = useState('All')
-  const [query, setQuery] = useState('')
+  const { t } = useTranslation();
+  const [markets, setMarkets] = useState<Market[]>([]);
+  const [category, setCategory] = useState('All');
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
-    marketApi.listMarkets({ category, query }).then(setMarkets)
-  }, [category, query])
+    marketApi.listMarkets({ category, query }).then(setMarkets);
+  }, [category, query]);
 
   const totalVolume = useMemo(
     () => markets.reduce((sum, m) => sum + m.volumeUsd, 0),
     [markets],
-  )
+  );
 
   return (
     <div className="app">
       <header className="topbar">
         <div className="brand">AI Predict</div>
         <nav>
-          <a>Markets</a>
-          <a>Portfolio</a>
-          <a>Leaderboard</a>
+          <a>{t('nav.markets')}</a>
+          <a>{t('nav.portfolio')}</a>
+          <a>{t('nav.leaderboard')}</a>
         </nav>
-        <button className="connect">Connect Wallet</button>
+        <div className="topbar-right">
+          <LanguageSwitcher />
+          <button className="connect">{t('nav.connectWallet')}</button>
+        </div>
       </header>
 
       <section className="hero">
-        <h1>Prediction Markets, Real-Time Sentiment</h1>
-        <p>Polymarket-inspired UI with backend-ready architecture.</p>
+        <h1>{t('hero.title')}</h1>
+        <p>{t('hero.subtitle')}</p>
         <div className="stats">
           <div>
-            <span>Total Markets</span>
+            <span>{t('stats.totalMarkets')}</span>
             <strong>{markets.length}</strong>
           </div>
           <div>
-            <span>Total Volume</span>
+            <span>{t('stats.totalVolume')}</span>
             <strong>${totalVolume.toLocaleString()}</strong>
           </div>
         </div>
@@ -50,11 +56,13 @@ function App() {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search markets..."
+          placeholder={t('filters.search')}
         />
         <select value={category} onChange={(e) => setCategory(e.target.value)}>
-          {categories.map((c) => (
-            <option key={c}>{c}</option>
+          {categoryKeys.map((c) => (
+            <option key={c} value={c === 'all' ? 'All' : c.charAt(0).toUpperCase() + c.slice(1)}>
+              {t(`categories.${c}`)}
+            </option>
           ))}
         </select>
       </section>
@@ -64,9 +72,9 @@ function App() {
           <article key={m.id} className="card">
             <div className="chip">{m.category}</div>
             <h3>{m.title}</h3>
-            <p>Ends: {m.endDate}</p>
+            <p>{t('market.ends')}: {m.endDate}</p>
             <p>
-              Vol ${m.volumeUsd.toLocaleString()} · Liq ${m.liquidityUsd.toLocaleString()}
+              {t('market.volume')} ${m.volumeUsd.toLocaleString()} · {t('market.liquidity')} ${m.liquidityUsd.toLocaleString()}
             </p>
             <div className="outcomes">
               {m.outcomes.map((o) => (
@@ -79,7 +87,7 @@ function App() {
         ))}
       </main>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
