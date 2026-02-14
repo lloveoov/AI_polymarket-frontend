@@ -1,4 +1,4 @@
-# AI_polymarket-frontend
+# AI Polymarket Frontend (Admin)
 
 Polymarket-inspired frontend (design language + color style), implemented with React + TypeScript + Vite, and structured for future backend integration.
 
