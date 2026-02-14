@@ -6,7 +6,7 @@
     "connectWallet": "连接钱包"
   },
   "hero": {
-    "title": "预测市场，实时情绪",
+    "title": "AI Predict Admin",
     "subtitle": "受 Polymarket 启发的 UI，具有后端就绪架构。"
   },
   "stats": {
