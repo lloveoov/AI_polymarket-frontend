@@ -1,0 +1,37 @@
+{
+  "nav": {
+    "markets": "Markets",
+    "portfolio": "Portfolio",
+    "leaderboard": "Leaderboard",
+    "connectWallet": "Connect Wallet"
+  },
+  "hero": {
+    "title": "Prediction Markets, Real-Time Sentiment",
+    "subtitle": "Polymarket-inspired UI with backend-ready architecture."
+  },
+  "stats": {
+    "totalMarkets": "Total Markets",
+    "totalVolume": "Total Volume"
+  },
+  "filters": {
+    "search": "Search markets...",
+    "category": "Category"
+  },
+  "market": {
+    "ends": "Ends",
+    "volume": "Vol",
+    "liquidity": "Liq"
+  },
+  "categories": {
+    "all": "All",
+    "crypto": "Crypto",
+    "ai": "AI",
+    "politics": "Politics",
+    "sports": "Sports"
+  },
+  "language": {
+    "switch": "Language",
+    "en": "English",
+    "zh": "中文"
+  }
+}
