@@ -1,26 +1,32 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import './App.css';
-import { marketApi } from './services/api';
-import type { Market } from './types/market';
-import { LanguageSwitcher } from './components/LanguageSwitcher';
+import { useEffect, useMemo, useState } from 'react'
+import { Routes, Route } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import './App.css'
+import { marketApi } from './services/api'
+import type { Market } from './types/market'
+import { LanguageSwitcher } from './components/LanguageSwitcher'
+import { AdminLayout } from './layouts/AdminLayout'
+import { EventsPage } from './pages/admin/Events'
+import { OddsPage } from './pages/admin/Odds'
+import { SettlementPage } from './pages/admin/Settlement'
+import { TokenFiatPage } from './pages/admin/TokenFiat'
 
-const categoryKeys = ['all', 'crypto', 'ai', 'politics', 'sports'] as const;
+const categoryKeys = ['all', 'crypto', 'ai', 'politics', 'sports'] as const
 
-function App() {
-  const { t } = useTranslation();
-  const [markets, setMarkets] = useState<Market[]>([]);
-  const [category, setCategory] = useState('All');
-  const [query, setQuery] = useState('');
+function MarketsPage() {
+  const { t } = useTranslation()
+  const [markets, setMarkets] = useState<Market[]>([])
+  const [category, setCategory] = useState('All')
+  const [query, setQuery] = useState('')
 
   useEffect(() => {
-    marketApi.listMarkets({ category, query }).then(setMarkets);
-  }, [category, query]);
+    marketApi.listMarkets({ category, query }).then(setMarkets)
+  }, [category, query])
 
   const totalVolume = useMemo(
     () => markets.reduce((sum, m) => sum + m.volumeUsd, 0),
     [markets],
-  );
+  )
 
   return (
     <div className="app">
@@ -87,7 +93,21 @@ function App() {
         ))}
       </main>
     </div>
-  );
+  )
 }
 
-export default App;
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<MarketsPage />} />
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route path="events" element={<EventsPage />} />
+        <Route path="odds" element={<OddsPage />} />
+        <Route path="settlement" element={<SettlementPage />} />
+        <Route path="tokens" element={<TokenFiatPage />} />
+      </Route>
+    </Routes>
+  )
+}
+
+export default App
