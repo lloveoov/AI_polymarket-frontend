@@ -1,0 +1,41 @@
+:root {
+  --bg: #070b14;
+  --panel: #111826;
+  --muted: #96a1b8;
+  --text: #f5f8ff;
+  --line: #1f2a40;
+  --accent: #0f7bff;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif; background: radial-gradient(1200px 500px at 20% -10%, #15325e, var(--bg)); color: var(--text); }
+
+.app { max-width: 1120px; margin: 0 auto; padding: 20px; }
+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: rgba(14,20,33,.86); border: 1px solid var(--line); border-radius: 12px; backdrop-filter: blur(8px); }
+.brand { font-weight: 800; letter-spacing: .2px; }
+nav { display: flex; gap: 18px; color: var(--muted); }
+nav a { cursor: pointer; }
+.connect { background: var(--accent); border: 0; color: white; padding: 10px 14px; border-radius: 10px; font-weight: 600; }
+
+.hero { margin-top: 20px; background: linear-gradient(130deg, rgba(15,123,255,.2), rgba(15,123,255,.03)); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+.hero h1 { margin: 0 0 8px; font-size: 30px; }
+.hero p { margin: 0; color: var(--muted); }
+.stats { margin-top: 14px; display: flex; gap: 18px; }
+.stats div { background: rgba(8,12,20,.7); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; min-width: 180px; }
+.stats span { display: block; color: var(--muted); font-size: 12px; }
+
+.filters { margin-top: 16px; display: grid; grid-template-columns: 1fr 180px; gap: 10px; }
+.filters input, .filters select { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+
+.grid { margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.card h3 { margin: 8px 0 10px; font-size: 18px; }
+.card p { margin: 6px 0; color: var(--muted); }
+.chip { display: inline-block; font-size: 12px; background: #0f7bff22; color: #8bbcff; padding: 4px 8px; border-radius: 999px; border: 1px solid #0f7bff55; }
+.outcomes { display: flex; gap: 8px; margin-top: 10px; }
+.outcomes button { flex: 1; border: 1px solid var(--line); background: #0a1020; color: var(--text); border-radius: 8px; padding: 8px; }
+
+@media (max-width: 860px) {
+  nav { display: none; }
+  .filters { grid-template-columns: 1fr; }
+}
