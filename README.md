@@ -90,3 +90,7 @@ npm run build
 2. Wallet connect flow
 3. Real-time odds updates via WebSocket
 4. Auth + portfolio state management
+
+## QA Documentation
+
+See [docs/qa/README.md](./docs/qa/README.md) for smoke and regression test checklists.
