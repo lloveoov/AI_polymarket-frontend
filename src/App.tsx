@@ -18,6 +18,20 @@ function MarketsPage() {
   const [markets, setMarkets] = useState<Market[]>([])
   const [category, setCategory] = useState('All')
   const [query, setQuery] = useState('')
+  const [backendStatus, setBackendStatus] = useState<'ok' | 'unreachable' | null>(null);
+
+  useEffect(() => {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
+    if (apiUrl) {
+      fetch(`${apiUrl}/health`)
+        .then((res) => {
+          setBackendStatus(res.ok ? 'ok' : 'unreachable');
+        })
+        .catch(() => {
+          setBackendStatus('unreachable');
+        });
+    }
+  }, []);
 
   useEffect(() => {
     marketApi.listMarkets({ category, query }).then(setMarkets)
@@ -31,6 +45,11 @@ function MarketsPage() {
   return (
     <div className="app">
       <header className="topbar">
+        {backendStatus && (
+          <div className={`backend-status ${backendStatus === 'unreachable' ? 'unreachable' : ''}`}>
+            Backend: {backendStatus === 'ok' ? 'OK' : 'unreachable'}
+          </div>
+        )}
         <div className="brand">AI Predict</div>
         <nav>
           <a>{t('nav.markets')}</a>
