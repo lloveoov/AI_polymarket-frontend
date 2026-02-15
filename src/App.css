@@ -43,3 +43,39 @@ nav a { cursor: pointer; }
   nav { display: none; }
   .filters { grid-template-columns: 1fr; }
 }
+
+.user-indicator { display: flex; align-items: center; gap: 8px; }
+.user-email { font-size: 13px; color: var(--muted); }
+.logout-btn { background: transparent; border: 1px solid var(--line); color: var(--muted); padding: 6px 10px; border-radius: 8px; font-size: 12px; cursor: pointer; }
+.logout-btn:hover { background: var(--line); }
+
+.login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(1200px 500px at 20% -10%, #15325e, var(--bg)); }
+.login-card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 32px; width: 100%; max-width: 380px; }
+.login-card h1 { margin: 0 0 8px; font-size: 24px; }
+.login-subtitle { color: var(--muted); margin: 0 0 24px; }
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; margin-bottom: 6px; font-size: 14px; }
+.form-group input { width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+.error-message { color: #f87171; font-size: 14px; margin-bottom: 16px; }
+.login-btn { width: 100%; background: var(--accent); border: 0; color: white; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
+.login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.demo-section { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line); }
+.demo-section p { color: var(--muted); font-size: 14px; margin: 0 0 12px; }
+.demo-buttons { display: flex; gap: 8px; }
+.demo-btn { flex: 1; background: var(--bg); border: 1px solid var(--line); color: var(--text); padding: 8px; border-radius: 8px; cursor: pointer; }
+.demo-btn:hover { background: var(--line); }
+
+.admin-layout { display: flex; min-height: 100vh; }
+.sidebar { width: 220px; background: var(--panel); border-right: 1px solid var(--line); padding: 20px; display: flex; flex-direction: column; }
+.sidebar .brand { font-weight: 800; letter-spacing: .2px; margin-bottom: 24px; }
+.sidebar nav { display: flex; flex-direction: column; gap: 8px; }
+.nav-link { padding: 10px 12px; border-radius: 8px; color: var(--muted); text-decoration: none; }
+.nav-link:hover { background: var(--bg); }
+.nav-link.active { background: var(--accent); color: white; }
+.sidebar-footer { margin-top: auto; padding-top: 20px; }
+.main-content { flex: 1; display: flex; flex-direction: column; }
+.main-content .topbar { display: flex; justify-content: space-between; align-items: center; border-radius: 0; border-left: 0; border-right: 0; }
+.header-right { display: flex; align-items: center; gap: 16px; }
+.back-link { color: var(--muted); text-decoration: none; font-size: 14px; }
+.back-link:hover { color: var(--text); }
+.main-content main { padding: 24px; }

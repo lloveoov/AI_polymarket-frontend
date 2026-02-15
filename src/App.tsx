@@ -10,6 +10,10 @@ import { EventsPage } from './pages/admin/Events'
 import { OddsPage } from './pages/admin/Odds'
 import { SettlementPage } from './pages/admin/Settlement'
 import { TokenFiatPage } from './pages/admin/TokenFiat'
+import { AdminLoginPage } from './pages/admin/Login'
+import { AuthProvider } from './contexts/AuthContext'
+import { ProtectedRoute } from './components/ProtectedRoute'
+import { useAuth } from './contexts/AuthContext'
 
 const categoryKeys = ['all', 'crypto', 'ai', 'politics', 'sports'] as const
 
@@ -19,6 +23,7 @@ function MarketsPage() {
   const [category, setCategory] = useState('All')
   const [query, setQuery] = useState('')
   const [backendStatus, setBackendStatus] = useState<'ok' | 'unreachable' | null>(null);
+  const { user, isAuthenticated, logout } = useAuth()
 
   useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
@@ -58,7 +63,14 @@ function MarketsPage() {
         </nav>
         <div className="topbar-right">
           <LanguageSwitcher />
-          <button className="connect">{t('nav.connectWallet')}</button>
+          {isAuthenticated ? (
+            <div className="user-indicator">
+              <span className="user-email">{user?.email}</span>
+              <button className="logout-btn" onClick={logout}>Logout</button>
+            </div>
+          ) : (
+            <button className="connect">{t('nav.connectWallet')}</button>
+          )}
         </div>
       </header>
 
@@ -117,15 +129,18 @@ function MarketsPage() {
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<MarketsPage />} />
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route path="events" element={<EventsPage />} />
-        <Route path="odds" element={<OddsPage />} />
-        <Route path="settlement" element={<SettlementPage />} />
-        <Route path="tokens" element={<TokenFiatPage />} />
-      </Route>
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<MarketsPage />} />
+        <Route path="/admin/login" element={<AdminLoginPage />} />
+        <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+          <Route path="events" element={<EventsPage />} />
+          <Route path="odds" element={<OddsPage />} />
+          <Route path="settlement" element={<SettlementPage />} />
+          <Route path="tokens" element={<TokenFiatPage />} />
+        </Route>
+      </Routes>
+    </AuthProvider>
   )
 }
 

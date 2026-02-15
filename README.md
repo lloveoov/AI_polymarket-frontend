@@ -74,6 +74,17 @@ npm run dev
 npm run build
 ```
 
+## Admin Authentication
+
+### Demo Credentials
+- Orion: shaoshixiong@gmail.com
+- Mark: mark@locatechs.com
+
+### Access
+1. Navigate to `/admin/login`
+2. Enter any demo email or click a demo account button
+3. Session persists via localStorage
+
 ## Next Milestones
 1. Route system + detail page
 2. Wallet connect flow
