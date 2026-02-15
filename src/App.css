@@ -79,3 +79,54 @@ nav a { cursor: pointer; }
 .back-link { color: var(--muted); text-decoration: none; font-size: 14px; }
 .back-link:hover { color: var(--text); }
 .main-content main { padding: 24px; }
+
+.admin-page h1 { margin: 0 0 8px; font-size: 24px; }
+.admin-page > p { color: var(--muted); margin: 0 0 24px; }
+.admin-page .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+.admin-page .page-header h1 { margin: 0; }
+
+.btn-primary { background: var(--accent); border: 0; color: white; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+.btn-primary:hover { background: #0d6de8; }
+.btn-secondary { background: var(--bg); border: 1px solid var(--line); color: var(--text); padding: 10px 16px; border-radius: 8px; cursor: pointer; }
+.btn-secondary:hover { background: var(--line); }
+.btn-small { padding: 6px 12px; font-size: 13px; }
+
+.filters-bar { display: flex; gap: 12px; margin-bottom: 20px; }
+.filters-bar .search-input { flex: 1; max-width: 300px; background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+.filters-bar select { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+
+.table-container { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th { text-align: left; padding: 14px 16px; background: rgba(0,0,0,0.2); color: var(--muted); font-weight: 600; font-size: 13px; border-bottom: 1px solid var(--line); }
+.data-table td { padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.data-table tr:last-child td { border-bottom: 0; }
+.data-table tr:hover { background: rgba(255,255,255,0.02); }
+.event-title { font-weight: 500; }
+.event-desc { font-size: 13px; color: var(--muted); margin-top: 4px; }
+.empty-state { text-align: center; color: var(--muted); padding: 40px !important; }
+
+.status-badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; text-transform: capitalize; }
+.status-active { background: #22c55e22; color: #4ade80; border: 1px solid #22c55e44; }
+.status-resolved { background: #0f7bff22; color: #8bbcff; border: 1px solid #0f7bff55; }
+.status-cancelled { background: #ef444422; color: #f87171; border: 1px solid #ef444444; }
+
+.action-buttons { display: flex; gap: 8px; }
+.btn-icon { background: transparent; border: 1px solid var(--line); color: var(--muted); width: 32px; height: 32px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.btn-icon:hover { background: var(--line); color: var(--text); }
+.btn-icon.btn-danger:hover { background: #ef444422; color: #f87171; border-color: #ef444444; }
+
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 100; }
+.modal { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 24px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+.modal h2 { margin: 0 0 20px; font-size: 20px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group textarea { width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-height: 80px; resize: vertical; }
+.form-group select { width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+.input-error { border-color: #f87171 !important; }
+.error-text { color: #f87171; font-size: 12px; display: block; margin-top: 4px; }
+
+.outcome-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+.outcome-row input[type="text"] { flex: 2; }
+.outcome-row input[type="number"] { width: 80px; }
+.prob-label { color: var(--muted); font-size: 14px; }
+
+.modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
