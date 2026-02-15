@@ -160,3 +160,87 @@ nav a { cursor: pointer; }
 
 .form-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
 .success-message { margin-top: 16px; padding: 12px; background: #22c55e22; color: #4ade80; border: 1px solid #22c55e44; border-radius: 8px; text-align: center; }
+
+/* Settlement page */
+.settlement-stages { display: flex; align-items: center; margin-bottom: 32px; }
+.stage-indicator { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+.stage-indicator.active { border-color: var(--accent); background: rgba(15, 123, 255, 0.1); }
+.stage-indicator.completed { border-color: #22c55e; background: rgba(34, 197, 94, 0.1); }
+.stage-number { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: var(--bg); border-radius: 50%; font-weight: 600; font-size: 14px; }
+.stage-indicator.active .stage-number { background: var(--accent); color: white; }
+.stage-indicator.completed .stage-number { background: #22c55e; color: white; }
+.stage-label { font-size: 14px; font-weight: 500; }
+.stage-line { flex: 1; height: 2px; background: var(--line); margin: 0 16px; }
+
+.settlement-content { display: grid; grid-template-columns: 1fr 400px; gap: 24px; }
+.markets-section h2, .vote-details-panel h2, .objection-section h2, .confirm-section h2 { margin: 0 0 20px; font-size: 18px; }
+.markets-grid { display: flex; flex-direction: column; gap: 12px; }
+.market-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; cursor: pointer; transition: border-color 0.2s, transform 0.2s; }
+.market-card:hover { border-color: var(--accent); }
+.market-card.selected { border-color: var(--accent); background: rgba(15, 123, 255, 0.05); }
+.market-card.ready { border-left: 3px solid #22c55e; }
+.market-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.market-card h3 { margin: 0 0 6px; font-size: 15px; }
+.market-date { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
+.llm-vote-preview { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.vote-label { color: var(--muted); }
+.vote-outcome { font-weight: 600; color: var(--accent); }
+.vote-confidence { color: var(--muted); }
+
+.status-ready { background: #22c55e22; color: #4ade80; border: 1px solid #22c55e44; }
+.status-pending { background: #f59e0b22; color: #fbbf24; border: 1px solid #f59e0b44; }
+
+.vote-details-panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+.vote-details { display: flex; flex-direction: column; gap: 16px; }
+.detail-row { display: flex; flex-direction: column; gap: 6px; }
+.detail-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.detail-value { font-size: 14px; display: flex; align-items: center; gap: 10px; }
+.detail-value.outcome-highlight { font-weight: 600; color: var(--accent); font-size: 18px; }
+.detail-value.reasoning { color: var(--muted); line-height: 1.5; }
+.confidence-bar { flex: 1; height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+.confidence-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #22c55e); border-radius: 4px; }
+.panel-actions { display: flex; gap: 12px; margin-top: 24px; }
+.panel-actions .btn-primary { flex: 1; }
+.panel-actions .btn-secondary { flex: 1; }
+
+/* Objection window */
+.objection-section { grid-column: 1 / -1; max-width: 800px; margin: 0 auto; width: 100%; }
+.objection-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.objection-header h2 { margin: 0; }
+.countdown-placeholder { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; padding: 12px 20px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+.countdown-label { font-size: 12px; color: var(--muted); }
+.countdown-timer { font-size: 24px; font-weight: 700; font-family: monospace; color: #f59e0b; }
+.objection-market-info { display: flex; align-items: center; gap: 16px; padding: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 24px; }
+.objection-market-info .market-title { font-weight: 500; flex: 1; }
+.objection-market-info .llm-result { color: var(--muted); font-size: 14px; }
+.objections-list h3 { margin: 0 0 16px; font-size: 16px; }
+.no-objections { padding: 40px; text-align: center; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+.objection-cards { display: flex; flex-direction: column; gap: 12px; }
+.objection-card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.objection-header-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.objection-user { font-weight: 600; font-size: 13px; }
+.objection-time { font-size: 12px; color: var(--muted); }
+.objection-reason { margin: 0; color: var(--muted); font-size: 14px; }
+
+/* Confirm stage */
+.confirm-section { grid-column: 1 / -1; max-width: 800px; margin: 0 auto; width: 100%; }
+.confirm-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.summary-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+.summary-card h3 { margin: 0 0 12px; font-size: 14px; color: var(--muted); }
+.summary-card p { margin: 0 0 8px; font-size: 14px; }
+.summary-card .chip { margin-top: 8px; }
+.settlement-outcome { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.outcome-label { color: var(--muted); font-size: 13px; }
+.outcome-value { font-weight: 700; font-size: 20px; color: var(--accent); }
+.confidence-display { font-size: 13px; color: var(--muted); }
+.objection-note { font-size: 12px; color: #f59e0b; font-style: italic; }
+.confirm-warning { display: flex; align-items: center; gap: 12px; padding: 16px; background: rgba(245, 158, 11, 0.1); border: 1px solid #f59e0b44; border-radius: 10px; margin-bottom: 24px; font-size: 14px; }
+.warning-icon { font-size: 20px; }
+.btn-confirm { background: #22c55e; border: 0; color: white; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+.btn-confirm:hover { background: #16a34a; }
+.btn-confirm:disabled { opacity: 0.5; cursor: not-allowed; }
+
+@media (max-width: 900px) {
+  .settlement-content { grid-template-columns: 1fr; }
+  .confirm-summary { grid-template-columns: 1fr; }
+}
