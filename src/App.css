@@ -1,10 +1,10 @@
 :root {
-  --bg: #f6f7fb;
-  --panel: #ffffff;
-  --muted: #6b7280;
-  --text: #111827;
-  --line: #e5e7eb;
-  --accent: #2563eb;
+  --bg: #070b14;
+  --panel: #111826;
+  --muted: #96a1b8;
+  --text: #f5f8ff;
+  --line: #1f2a40;
+  --accent: #3b82f6;
   --up: #16a34a;
   --down: #dc2626;
 }
@@ -60,12 +60,12 @@ nav a { cursor: pointer; }
 .filters { margin-top: 16px; display: grid; grid-template-columns: 1fr 180px; gap: 10px; }
 .filters input, .filters select { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
 
-.grid { margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
-.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.grid { margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; grid-auto-rows: 1fr; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; height: 100%; }
 .card h3 { margin: 8px 0 10px; font-size: 18px; }
 .card p { margin: 6px 0; color: var(--muted); }
 .chip { display: inline-block; font-size: 12px; background: #0f7bff22; color: #8bbcff; padding: 4px 8px; border-radius: 999px; border: 1px solid #0f7bff55; }
-.outcomes { display: flex; gap: 8px; margin-top: 10px; }
+.outcomes { display: flex; gap: 8px; margin-top: auto; padding-top: 10px; }
 .outcomes button { flex: 1; border: 1px solid var(--line); color: #fff; border-radius: 8px; padding: 8px; font-weight: 600; }
 .outcomes .btn-up { background: var(--up); border-color: #15803d; }
 .outcomes .btn-down { background: var(--down); border-color: #b91c1c; }
