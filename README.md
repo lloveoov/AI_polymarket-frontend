@@ -83,9 +83,7 @@ npm run build
 
 ## Admin Authentication
 
-### Demo Credentials
-- Orion: shaoshixiong@gmail.com
-- Mark: mark@locatechs.com
+
 
 ### Access
 1. Navigate to `/admin/login`
