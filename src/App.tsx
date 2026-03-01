@@ -62,6 +62,8 @@ function MarketsPage() {
     [markets],
   )
 
+  const trendPoints = [42, 48, 45, 56, 63, 58, 66, 72]
+
   return (
     <div className="app">
       <header className="topbar">
@@ -101,6 +103,37 @@ function MarketsPage() {
             <span>{t('stats.totalVolume')}</span>
             <strong>${totalVolume.toLocaleString()}</strong>
           </div>
+        </div>
+      </section>
+
+      <section className="overview-panels">
+        <div className="trend-panel">
+          <div className="panel-header">
+            <h2>Market Trend</h2>
+            <span>24h</span>
+          </div>
+          <div className="trend-chart">
+            {trendPoints.map((p, idx) => (
+              <div key={idx} className="trend-bar-wrap">
+                <div className="trend-bar" style={{ height: `${p}%` }} />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="news-panel">
+          <div className="panel-header">
+            <h2>News</h2>
+            <span>Latest</span>
+          </div>
+          <ul>
+            {(hotspots?.english || []).slice(0, 3).map((item, idx) => (
+              <li key={`news-${idx}`}>
+                <a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
+              </li>
+            ))}
+            {!hotspots && <li>Loading news...</li>}
+          </ul>
         </div>
       </section>
 
@@ -162,11 +195,14 @@ function MarketsPage() {
               {t('market.volume')} ${m.volumeUsd.toLocaleString()} · {t('market.liquidity')} ${m.liquidityUsd.toLocaleString()}
             </p>
             <div className="outcomes">
-              {m.outcomes.map((o) => (
-                <button key={o.id}>
-                  {o.name} <strong>{o.probability}%</strong>
-                </button>
-              ))}
+              {m.outcomes.map((o, idx) => {
+                const isUp = /yes|up|long|buy/i.test(o.name) || idx === 0
+                return (
+                  <button key={o.id} className={isUp ? 'btn-up' : 'btn-down'}>
+                    {o.name} <strong>{o.probability}%</strong>
+                  </button>
+                )
+              })}
             </div>
           </article>
         ))}
