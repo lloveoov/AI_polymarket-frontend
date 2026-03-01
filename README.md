@@ -63,6 +63,13 @@ Polymarket-inspired frontend (design language + color style), implemented with R
 - `src/types/market.ts`: shared market domain types
 - Current implementation uses mock API; replace with HTTP API later.
 
+## Daily Hot Topics / 每日热点
+- Backend endpoint: `GET /hotspots/daily`
+- English Top 3: fetched from Polymarket (Gamma API, volume-ranked)
+- Chinese Top 3: fetched from 微热点 source (Weibo hot search endpoint)
+- Cache strategy: one payload per day, auto-refresh on date change
+- Frontend displays 6 topics total (EN 3 + ZH 3)
+
 ## Run
 ```bash
 npm install

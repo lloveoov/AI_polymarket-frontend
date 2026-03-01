@@ -33,5 +33,13 @@
     "switch": "Language",
     "en": "English",
     "zh": "中文"
+  },
+  "hotspots": {
+    "title": "Daily Hot Topics",
+    "dailyUpdate": "Updated daily",
+    "english": "Polymarket Top 3 (EN)",
+    "chinese": "Weihot Top 3 (ZH)",
+    "loading": "Loading hotspots...",
+    "unavailable": "Hotspots are temporarily unavailable"
   }
 }
