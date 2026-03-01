@@ -52,17 +52,17 @@ function todayKey() {
   return new Date().toISOString().slice(0, 10);
 }
 
-async function fetchPolymarketTop3() {
+async function fetchPolymarketTop(limit = 3) {
   try {
     const url =
-      'https://gamma-api.polymarket.com/markets?active=true&closed=false&archived=false&limit=20&offset=0';
+      `https://gamma-api.polymarket.com/markets?active=true&closed=false&archived=false&limit=${Math.max(limit * 3, 20)}&offset=0`;
     const res = await fetch(url, { headers: { accept: 'application/json' } });
     if (!res.ok) throw new Error(`Polymarket status ${res.status}`);
     const rows = await res.json();
 
     const sorted = [...rows]
       .sort((a, b) => Number(b.volume || 0) - Number(a.volume || 0))
-      .slice(0, 3)
+      .slice(0, limit)
       .map((m) => ({
         title: m.question || m.title || 'Unknown topic',
         source: 'Polymarket',
@@ -71,12 +71,12 @@ async function fetchPolymarketTop3() {
 
     return sorted;
   } catch (err) {
-    console.error('fetchPolymarketTop3 failed:', err.message);
-    return [
-      { title: 'Polymarket trend unavailable #1', source: 'Polymarket', url: 'https://polymarket.com' },
-      { title: 'Polymarket trend unavailable #2', source: 'Polymarket', url: 'https://polymarket.com' },
-      { title: 'Polymarket trend unavailable #3', source: 'Polymarket', url: 'https://polymarket.com' },
-    ];
+    console.error('fetchPolymarketTop failed:', err.message);
+    return Array.from({ length: limit }).map((_, i) => ({
+      title: `Polymarket trend unavailable #${i + 1}`,
+      source: 'Polymarket',
+      url: 'https://polymarket.com',
+    }));
   }
 }
 
@@ -115,7 +115,10 @@ async function fetchChineseTop3() {
 }
 
 async function buildHotspots() {
-  const [enTop3, zhTop3] = await Promise.all([fetchPolymarketTop3(), fetchChineseTop3()]);
+  // Fast-track mode: use Polymarket English hotspots for both sections.
+  const enTop6 = await fetchPolymarketTop(6);
+  const enTop3 = enTop6.slice(0, 3);
+  const zhTop3 = enTop6.slice(3, 6);
 
   return {
     date: todayKey(),
