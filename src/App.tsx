@@ -22,21 +22,36 @@ function MarketsPage() {
   const [markets, setMarkets] = useState<Market[]>([])
   const [category, setCategory] = useState('All')
   const [query, setQuery] = useState('')
-  const [backendStatus, setBackendStatus] = useState<'ok' | 'unreachable' | null>(null);
+  const [backendStatus, setBackendStatus] = useState<'ok' | 'unreachable' | null>(null)
+  const [hotspots, setHotspots] = useState<{ english: { title: string; url: string }[]; chinese: { title: string; url: string }[] } | null>(null)
+  const [hotspotError, setHotspotError] = useState<string | null>(null)
   const { user, isAuthenticated, logout } = useAuth()
 
   useEffect(() => {
-    const apiUrl = import.meta.env.VITE_API_BASE_URL;
+    const apiUrl = import.meta.env.VITE_API_BASE_URL
     if (apiUrl) {
       fetch(`${apiUrl}/health`)
         .then((res) => {
-          setBackendStatus(res.ok ? 'ok' : 'unreachable');
+          setBackendStatus(res.ok ? 'ok' : 'unreachable')
         })
         .catch(() => {
-          setBackendStatus('unreachable');
-        });
+          setBackendStatus('unreachable')
+        })
+
+      fetch(`${apiUrl}/hotspots/daily`)
+        .then((res) => {
+          if (!res.ok) throw new Error('failed')
+          return res.json()
+        })
+        .then((data) => {
+          setHotspots({ english: data.english || [], chinese: data.chinese || [] })
+          setHotspotError(null)
+        })
+        .catch(() => {
+          setHotspotError('unavailable')
+        })
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     marketApi.listMarkets({ category, query }).then(setMarkets)
@@ -87,6 +102,39 @@ function MarketsPage() {
             <strong>${totalVolume.toLocaleString()}</strong>
           </div>
         </div>
+      </section>
+
+      <section className="hotspots">
+        <div className="hotspots-header">
+          <h2>{t('hotspots.title')}</h2>
+          <span>{t('hotspots.dailyUpdate')}</span>
+        </div>
+        {hotspotError && <p className="hotspots-error">{t('hotspots.unavailable')}</p>}
+        {!hotspotError && !hotspots && <p className="hotspots-loading">{t('hotspots.loading')}</p>}
+        {hotspots && (
+          <div className="hotspots-grid">
+            <div className="hotspot-col">
+              <h3>{t('hotspots.english')}</h3>
+              <ol>
+                {hotspots.english.slice(0, 3).map((item, idx) => (
+                  <li key={`en-${idx}`}>
+                    <a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <div className="hotspot-col">
+              <h3>{t('hotspots.chinese')}</h3>
+              <ol>
+                {hotspots.chinese.slice(0, 3).map((item, idx) => (
+                  <li key={`zh-${idx}`}>
+                    <a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        )}
       </section>
 
       <section className="filters">

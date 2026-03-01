@@ -33,5 +33,13 @@
     "switch": "语言",
     "en": "English",
     "zh": "中文"
+  },
+  "hotspots": {
+    "title": "每日热点",
+    "dailyUpdate": "每日更新",
+    "english": "Polymarket 英文前3",
+    "chinese": "微热点中文前3",
+    "loading": "热点加载中...",
+    "unavailable": "热点暂时不可用"
   }
 }
