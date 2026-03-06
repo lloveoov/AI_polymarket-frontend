@@ -23,7 +23,7 @@ function MarketsPage() {
   const [category, setCategory] = useState('All')
   const [query, setQuery] = useState('')
   const [backendStatus, setBackendStatus] = useState<'ok' | 'unreachable' | null>(null)
-  const [hotspots, setHotspots] = useState<{ english: { title: string; url: string }[]; chinese: { title: string; url: string }[] } | null>(null)
+  const [hotspots, setHotspots] = useState<{ polymarket: { title: string; url: string }[]; weibo: { title: string; url: string }[] } | null>(null)
   const [hotspotError, setHotspotError] = useState<string | null>(null)
   const { user, isAuthenticated, logout } = useAuth()
 
@@ -44,7 +44,10 @@ function MarketsPage() {
           return res.json()
         })
         .then((data) => {
-          setHotspots({ english: data.english || [], chinese: data.chinese || [] })
+          setHotspots({
+            polymarket: data.polymarket || data.english || [],
+            weibo: data.weibo || data.chinese || [],
+          })
           setHotspotError(null)
         })
         .catch(() => {
@@ -127,7 +130,7 @@ function MarketsPage() {
             <span>Latest</span>
           </div>
           <ul>
-            {(hotspots?.english || []).slice(0, 3).map((item, idx) => (
+            {(hotspots?.polymarket || []).slice(0, 3).map((item, idx) => (
               <li key={`news-${idx}`}>
                 <a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
               </li>
@@ -145,26 +148,29 @@ function MarketsPage() {
         {hotspotError && <p className="hotspots-error">{t('hotspots.unavailable')}</p>}
         {!hotspotError && !hotspots && <p className="hotspots-loading">{t('hotspots.loading')}</p>}
         {hotspots && (
-          <div className="hotspots-grid">
-            <div className="hotspot-col">
-              <h3>{t('hotspots.english')}</h3>
-              <ol>
-                {hotspots.english.slice(0, 3).map((item, idx) => (
-                  <li key={`en-${idx}`}>
+          <div className="hotspots-grid-rows">
+            <div className="hotspot-row">
+              <h3>{t('hotspots.polymarket')}</h3>
+              <div className="hotspot-cards">
+                {hotspots.polymarket.slice(0, 3).map((item, idx) => (
+                  <article key={`poly-${idx}`} className="hotspot-card">
+                    <span className="hotspot-rank">#{idx + 1}</span>
                     <a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
-                  </li>
+                  </article>
                 ))}
-              </ol>
+              </div>
             </div>
-            <div className="hotspot-col">
-              <h3>{t('hotspots.chinese')}</h3>
-              <ol>
-                {hotspots.chinese.slice(0, 3).map((item, idx) => (
-                  <li key={`zh-${idx}`}>
+
+            <div className="hotspot-row">
+              <h3>{t('hotspots.weibo')}</h3>
+              <div className="hotspot-cards">
+                {hotspots.weibo.slice(0, 3).map((item, idx) => (
+                  <article key={`weibo-${idx}`} className="hotspot-card">
+                    <span className="hotspot-rank">#{idx + 1}</span>
                     <a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
-                  </li>
+                  </article>
                 ))}
-              </ol>
+              </div>
             </div>
           </div>
         )}

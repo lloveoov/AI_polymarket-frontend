@@ -35,10 +35,10 @@
     "zh": "中文"
   },
   "hotspots": {
-    "title": "Daily Hot Topics",
+    "title": "Hotspot Prediction",
     "dailyUpdate": "Updated daily",
-    "english": "Polymarket Top 3 (EN)",
-    "chinese": "Weihot Top 3 (ZH)",
+    "polymarket": "Polymarket Top 3",
+    "weibo": "Sina Weibo Top 3",
     "loading": "Loading hotspots...",
     "unavailable": "Hotspots are temporarily unavailable"
   }

@@ -115,17 +115,20 @@ async function fetchChineseTop3() {
 }
 
 async function buildHotspots() {
-  // Fast-track mode: use Polymarket English hotspots for both sections.
-  const enTop6 = await fetchPolymarketTop(6);
-  const enTop3 = enTop6.slice(0, 3);
-  const zhTop3 = enTop6.slice(3, 6);
+  const [polymarketTop3, weiboTop3] = await Promise.all([
+    fetchPolymarketTop(3),
+    fetchChineseTop3(),
+  ]);
 
   return {
     date: todayKey(),
     updatedAt: new Date().toISOString(),
-    english: enTop3,
-    chinese: zhTop3,
-    all: [...enTop3, ...zhTop3],
+    polymarket: polymarketTop3,
+    weibo: weiboTop3,
+    // Backward compatibility for existing frontend fields
+    english: polymarketTop3,
+    chinese: weiboTop3,
+    all: [...polymarketTop3, ...weiboTop3],
   };
 }
 

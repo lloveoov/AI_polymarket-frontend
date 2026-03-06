@@ -47,13 +47,14 @@ nav a { cursor: pointer; }
 .hotspots-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
 .hotspots-header h2 { margin: 0; font-size: 18px; }
 .hotspots-header span { color: var(--muted); font-size: 12px; }
-.hotspots-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.hotspot-col { background: #0a1020; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
-.hotspot-col h3 { margin: 0 0 8px; color: #8bbcff; font-size: 14px; }
-.hotspot-col ol { margin: 0; padding-left: 18px; }
-.hotspot-col li { margin: 6px 0; color: var(--muted); }
-.hotspot-col a { color: var(--text); text-decoration: none; }
-.hotspot-col a:hover { text-decoration: underline; }
+.hotspots-grid-rows { display: grid; gap: 12px; }
+.hotspot-row { background: #0a1020; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.hotspot-row h3 { margin: 0 0 10px; color: #8bbcff; font-size: 14px; }
+.hotspot-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.hotspot-card { background: #0c1325; border: 1px solid var(--line); border-radius: 10px; padding: 10px; min-height: 76px; display: flex; flex-direction: column; gap: 6px; }
+.hotspot-rank { color: #8bbcff; font-size: 12px; font-weight: 700; }
+.hotspot-card a { color: var(--text); text-decoration: none; font-size: 14px; line-height: 1.35; }
+.hotspot-card a:hover { text-decoration: underline; }
 .hotspots-loading, .hotspots-error { margin: 6px 0; color: var(--muted); }
 .hotspots-error { color: #f87171; }
 
@@ -73,7 +74,7 @@ nav a { cursor: pointer; }
 @media (max-width: 860px) {
   nav { display: none; }
   .overview-panels { grid-template-columns: 1fr; }
-  .hotspots-grid { grid-template-columns: 1fr; }
+  .hotspot-cards { grid-template-columns: 1fr; }
   .filters { grid-template-columns: 1fr; }
 }
 
