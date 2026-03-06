@@ -39,6 +39,8 @@
     "dailyUpdate": "Updated daily",
     "polymarket": "Polymarket Top 3",
     "weibo": "Sina Weibo Top 3",
+    "yes": "Yes",
+    "no": "No",
     "loading": "Loading hotspots...",
     "unavailable": "Hotspots are temporarily unavailable"
   }

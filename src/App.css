@@ -55,6 +55,11 @@ nav a { cursor: pointer; }
 .hotspot-rank { color: #8bbcff; font-size: 12px; font-weight: 700; }
 .hotspot-card a { color: var(--text); text-decoration: none; font-size: 14px; line-height: 1.35; }
 .hotspot-card a:hover { text-decoration: underline; }
+.topic-vote-actions { display: flex; gap: 8px; margin-top: auto; padding-top: 8px; }
+.topic-vote-actions button { flex: 1; border: 1px solid var(--line); color: #fff; border-radius: 8px; padding: 8px; font-weight: 600; cursor: pointer; }
+.topic-vote-actions .btn-up { background: var(--up); border-color: #15803d; }
+.topic-vote-actions .btn-down { background: var(--down); border-color: #b91c1c; }
+.topic-vote-actions button.selected { box-shadow: 0 0 0 2px rgba(255,255,255,0.35) inset; }
 .hotspots-loading, .hotspots-error { margin: 6px 0; color: var(--muted); }
 .hotspots-error { color: #f87171; }
 

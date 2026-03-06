@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type MouseEvent } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import './App.css'
@@ -25,6 +25,7 @@ function MarketsPage() {
   const [backendStatus, setBackendStatus] = useState<'ok' | 'unreachable' | null>(null)
   const [hotspots, setHotspots] = useState<{ polymarket: { title: string; url: string }[]; weibo: { title: string; url: string }[] } | null>(null)
   const [hotspotError, setHotspotError] = useState<string | null>(null)
+  const [topicVotes, setTopicVotes] = useState<Record<string, 'YES' | 'NO'>>({})
   const { user, isAuthenticated, logout } = useAuth()
 
   useEffect(() => {
@@ -66,6 +67,12 @@ function MarketsPage() {
   )
 
   const trendPoints = [42, 48, 45, 56, 63, 58, 66, 72]
+
+  const onVoteTopic = (e: MouseEvent<HTMLButtonElement>, key: string, vote: 'YES' | 'NO', url: string) => {
+    e.preventDefault()
+    setTopicVotes((prev) => ({ ...prev, [key]: vote }))
+    window.open(url, '_blank', 'noopener,noreferrer')
+  }
 
   return (
     <div className="app">
@@ -152,24 +159,60 @@ function MarketsPage() {
             <div className="hotspot-row">
               <h3>{t('hotspots.polymarket')}</h3>
               <div className="hotspot-cards">
-                {hotspots.polymarket.slice(0, 3).map((item, idx) => (
-                  <article key={`poly-${idx}`} className="hotspot-card">
-                    <span className="hotspot-rank">#{idx + 1}</span>
-                    <a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
-                  </article>
-                ))}
+                {hotspots.polymarket.slice(0, 3).map((item, idx) => {
+                  const voteKey = `poly-${idx}-${item.title}`
+                  const selected = topicVotes[voteKey]
+                  return (
+                    <article key={`poly-${idx}`} className="hotspot-card">
+                      <span className="hotspot-rank">#{idx + 1}</span>
+                      <a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
+                      <div className="topic-vote-actions">
+                        <button
+                          className={`btn-up ${selected === 'YES' ? 'selected' : ''}`}
+                          onClick={(e) => onVoteTopic(e, voteKey, 'YES', item.url)}
+                        >
+                          {t('hotspots.yes')}
+                        </button>
+                        <button
+                          className={`btn-down ${selected === 'NO' ? 'selected' : ''}`}
+                          onClick={(e) => onVoteTopic(e, voteKey, 'NO', item.url)}
+                        >
+                          {t('hotspots.no')}
+                        </button>
+                      </div>
+                    </article>
+                  )
+                })}
               </div>
             </div>
 
             <div className="hotspot-row">
               <h3>{t('hotspots.weibo')}</h3>
               <div className="hotspot-cards">
-                {hotspots.weibo.slice(0, 3).map((item, idx) => (
-                  <article key={`weibo-${idx}`} className="hotspot-card">
-                    <span className="hotspot-rank">#{idx + 1}</span>
-                    <a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
-                  </article>
-                ))}
+                {hotspots.weibo.slice(0, 3).map((item, idx) => {
+                  const voteKey = `weibo-${idx}-${item.title}`
+                  const selected = topicVotes[voteKey]
+                  return (
+                    <article key={`weibo-${idx}`} className="hotspot-card">
+                      <span className="hotspot-rank">#{idx + 1}</span>
+                      <a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
+                      <div className="topic-vote-actions">
+                        <button
+                          className={`btn-up ${selected === 'YES' ? 'selected' : ''}`}
+                          onClick={(e) => onVoteTopic(e, voteKey, 'YES', item.url)}
+                        >
+                          {t('hotspots.yes')}
+                        </button>
+                        <button
+                          className={`btn-down ${selected === 'NO' ? 'selected' : ''}`}
+                          onClick={(e) => onVoteTopic(e, voteKey, 'NO', item.url)}
+                        >
+                          {t('hotspots.no')}
+                        </button>
+                      </div>
+                    </article>
+                  )
+                })}
               </div>
             </div>
           </div>
