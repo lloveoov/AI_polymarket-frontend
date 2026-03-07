@@ -17,4 +17,6 @@ export type Market = {
 export type MarketFilters = {
   category?: string
   query?: string
+  expiresInDays?: number
+  sortBy?: 'volume' | 'endDate' | 'probability'
 }

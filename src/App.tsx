@@ -30,6 +30,8 @@ function MarketsPage() {
   const [markets, setMarkets] = useState<Market[]>([])
   const [category, setCategory] = useState('All')
   const [query, setQuery] = useState('')
+  const [expiresInDays, setExpiresInDays] = useState<number>(0)
+  const [sortBy, setSortBy] = useState<'volume' | 'endDate' | 'probability'>('volume')
   const [backendStatus, setBackendStatus] = useState<'ok' | 'unreachable' | null>(null)
   const [hotspots, setHotspots] = useState<HotspotPayload | null>(null)
   const [hotspotError, setHotspotError] = useState<string | null>(null)
@@ -73,8 +75,8 @@ function MarketsPage() {
   }, [])
 
   useEffect(() => {
-    marketApi.listMarkets({ category, query }).then(setMarkets)
-  }, [category, query])
+    marketApi.listMarkets({ category, query, expiresInDays, sortBy }).then(setMarkets)
+  }, [category, query, expiresInDays, sortBy])
 
   const totalVolume = useMemo(
     () => markets.reduce((sum, m) => sum + m.volumeUsd, 0),
@@ -82,6 +84,7 @@ function MarketsPage() {
   )
 
   const trendPoints = [42, 48, 45, 56, 63, 58, 66, 72]
+  const featuredMarkets = useMemo(() => markets.slice(0, 3), [markets])
 
   const onVoteTopic = (e: MouseEvent<HTMLButtonElement>, key: string, vote: 'YES' | 'NO', url: string) => {
     e.preventDefault()
@@ -128,6 +131,24 @@ function MarketsPage() {
             <span>{t('stats.totalVolume')}</span>
             <strong>${totalVolume.toLocaleString()}</strong>
           </div>
+        </div>
+      </section>
+
+      <section className="featured-markets">
+        <div className="panel-header">
+          <h2>Trending Markets</h2>
+          <span>Top 3 by current filters</span>
+        </div>
+        <div className="featured-grid">
+          {featuredMarkets.map((m) => (
+            <article key={`featured-${m.id}`} className="featured-card">
+              <div className="chip">{m.category}</div>
+              <h3>{m.title}</h3>
+              <p>Prob: {m.outcomes[0]?.probability ?? '-'}% / Vol: ${m.volumeUsd.toLocaleString()}</p>
+              <p>Ends: {m.endDate}</p>
+            </article>
+          ))}
+          {featuredMarkets.length === 0 && <p className="hotspots-loading">No markets found.</p>}
         </div>
       </section>
 
@@ -241,11 +262,11 @@ function MarketsPage() {
         )}
       </section>
 
-      <section className="filters">
+      <section className="filters filters-4col">
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder={t('filters.search')}
+          placeholder={`${t('filters.search')} (keyword)`}
         />
         <select value={category} onChange={(e) => setCategory(e.target.value)}>
           {categoryKeys.map((c) => (
@@ -253,6 +274,17 @@ function MarketsPage() {
               {t(`categories.${c}`)}
             </option>
           ))}
+        </select>
+        <select value={expiresInDays} onChange={(e) => setExpiresInDays(Number(e.target.value))}>
+          <option value={0}>All expiry</option>
+          <option value={7}>Expire in 7 days</option>
+          <option value={30}>Expire in 30 days</option>
+          <option value={90}>Expire in 90 days</option>
+        </select>
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value as 'volume' | 'endDate' | 'probability')}>
+          <option value="volume">Sort: Volume</option>
+          <option value="endDate">Sort: End date</option>
+          <option value="probability">Sort: Probability</option>
         </select>
       </section>
 
