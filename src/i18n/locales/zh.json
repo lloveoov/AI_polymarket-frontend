@@ -42,6 +42,7 @@
       "tech": "科技类（随机2个）",
       "entertainment": "娱乐类（随机2个）"
     },
+    "polymarketAllMarkets": "Polymarket All Markets（前3页抓取，Top 6）",
     "yes": "看涨",
     "no": "看跌",
     "loading": "热点加载中...",

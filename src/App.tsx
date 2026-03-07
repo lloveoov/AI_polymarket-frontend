@@ -21,6 +21,7 @@ const hotspotCategoryKeys = ['general', 'tech', 'entertainment'] as const
 type HotspotTopic = { title: string; url: string; source?: string; board?: string }
 type HotspotPayload = {
   categories: Record<(typeof hotspotCategoryKeys)[number], HotspotTopic[]>
+  polymarketAllMarkets?: HotspotTopic[]
   all?: HotspotTopic[]
 }
 
@@ -60,6 +61,7 @@ function MarketsPage() {
               tech: data?.categories?.tech || fallbackGeneral.slice(0, 2),
               entertainment: data?.categories?.entertainment || fallbackEntertainment.slice(0, 2),
             },
+            polymarketAllMarkets: data?.polymarketAllMarkets || [],
             all: data?.all || [],
           })
           setHotspotError(null)
@@ -204,6 +206,37 @@ function MarketsPage() {
                 </div>
               )
             })}
+
+            <div className="hotspot-row">
+              <h3>{t('hotspots.polymarketAllMarkets')}</h3>
+              <div className="hotspot-cards">
+                {(hotspots.polymarketAllMarkets || []).slice(0, 6).map((item, idx) => {
+                  const voteKey = `poly-all-${idx}-${item.title}`
+                  const selected = topicVotes[voteKey]
+                  return (
+                    <article key={`poly-all-${idx}`} className="hotspot-card">
+                      <span className="hotspot-rank">#{idx + 1}</span>
+                      <a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
+                      <div className="topic-meta">{item.board || item.source || 'Polymarket'}</div>
+                      <div className="topic-vote-actions">
+                        <button
+                          className={`btn-up ${selected === 'YES' ? 'selected' : ''}`}
+                          onClick={(e) => onVoteTopic(e, voteKey, 'YES', item.url)}
+                        >
+                          {t('hotspots.yes')}
+                        </button>
+                        <button
+                          className={`btn-down ${selected === 'NO' ? 'selected' : ''}`}
+                          onClick={(e) => onVoteTopic(e, voteKey, 'NO', item.url)}
+                        >
+                          {t('hotspots.no')}
+                        </button>
+                      </div>
+                    </article>
+                  )
+                })}
+              </div>
+            </div>
           </div>
         )}
       </section>

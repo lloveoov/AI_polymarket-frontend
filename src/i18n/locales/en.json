@@ -42,6 +42,7 @@
       "tech": "Tech (2 random)",
       "entertainment": "Entertainment (2 random)"
     },
+    "polymarketAllMarkets": "Polymarket All Markets (Top 6 from first 3 pages)",
     "yes": "Yes",
     "no": "No",
     "loading": "Loading hotspots...",

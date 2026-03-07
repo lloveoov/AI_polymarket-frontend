@@ -161,11 +161,42 @@ function getCurrentSlotKey() {
   return `${now.dateKey}-pre08`;
 }
 
-function shouldRunScheduleNow() {
-  const now = amsterdamNowParts();
-  const inMorningWindow = now.hour === 8 && now.minute <= 10;
-  const inEveningWindow = now.hour === 20 && now.minute <= 10;
-  return inMorningWindow || inEveningWindow;
+async function fetchPolymarketAllMarketsTop(limit = 6, pages = 3) {
+  const pageSize = 100;
+  const rows = [];
+
+  try {
+    for (let page = 0; page < pages; page += 1) {
+      const offset = page * pageSize;
+      const url = `https://gamma-api.polymarket.com/markets?active=true&closed=false&archived=false&limit=${pageSize}&offset=${offset}`;
+      const res = await fetch(url, { headers: { accept: 'application/json' } });
+      if (!res.ok) throw new Error(`Polymarket status ${res.status}`);
+      const data = await res.json();
+      if (!Array.isArray(data) || data.length === 0) break;
+      rows.push(...data);
+    }
+
+    const top = rows
+      .sort((a, b) => Number(b.volume || 0) - Number(a.volume || 0))
+      .slice(0, limit)
+      .map((m) => ({
+        title: m.question || m.title || 'Unknown market topic',
+        url: m.slug ? `https://polymarket.com/event/${m.slug}` : 'https://polymarket.com',
+        source: 'Polymarket',
+        board: 'All Markets',
+      }));
+
+    if (!top.length) throw new Error('empty polymarket list');
+    return top;
+  } catch (err) {
+    console.error('fetchPolymarketAllMarketsTop failed:', err.message);
+    return Array.from({ length: limit }).map((_, i) => ({
+      title: `Polymarket market loading #${i + 1}`,
+      url: 'https://polymarket.com/markets',
+      source: 'Polymarket',
+      board: 'All Markets',
+    }));
+  }
 }
 
 async function buildHotspots() {
@@ -176,6 +207,8 @@ async function buildHotspots() {
   } catch (err) {
     console.error('fetchTophubByCategory failed:', err.message);
   }
+
+  const polymarketAllMarkets = await fetchPolymarketAllMarketsTop(6, 3);
 
   const general = shuffle(grouped.general).slice(0, 2);
   const tech = shuffle(grouped.tech).slice(0, 2);
@@ -195,6 +228,7 @@ async function buildHotspots() {
     updatedAt: new Date().toISOString(),
     categories: normalized,
     all,
+    polymarketAllMarkets,
     // backward-compatible fields used by old frontend
     polymarket: [...normalized.general, ...normalized.tech].slice(0, 3),
     weibo: [...normalized.entertainment, ...normalized.general].slice(0, 3),
@@ -216,9 +250,8 @@ async function getDailyHotspots() {
 
 setInterval(async () => {
   try {
-    if (!shouldRunScheduleNow()) return;
-
     const slotKey = getCurrentSlotKey();
+    if (slotKey.endsWith('pre08')) return;
     if (HOTSPOT_CACHE.slotKey === slotKey) return;
 
     const payload = await buildHotspots();
