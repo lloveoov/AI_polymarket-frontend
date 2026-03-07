@@ -230,7 +230,7 @@ setInterval(async () => {
   } catch (err) {
     console.error('[hotspots] scheduled refresh failed:', err.message);
   }
-}, 60 * 1000);
+}, 4 * 60 * 60 * 1000);
 
 app.get('/health', (req, res) => {
   res.json({
