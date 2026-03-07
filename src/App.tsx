@@ -16,6 +16,13 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import { useAuth } from './contexts/AuthContext'
 
 const categoryKeys = ['all', 'crypto', 'ai', 'politics', 'sports'] as const
+const hotspotCategoryKeys = ['general', 'tech', 'entertainment'] as const
+
+type HotspotTopic = { title: string; url: string; source?: string; board?: string }
+type HotspotPayload = {
+  categories: Record<(typeof hotspotCategoryKeys)[number], HotspotTopic[]>
+  all?: HotspotTopic[]
+}
 
 function MarketsPage() {
   const { t } = useTranslation()
@@ -23,7 +30,7 @@ function MarketsPage() {
   const [category, setCategory] = useState('All')
   const [query, setQuery] = useState('')
   const [backendStatus, setBackendStatus] = useState<'ok' | 'unreachable' | null>(null)
-  const [hotspots, setHotspots] = useState<{ polymarket: { title: string; url: string }[]; weibo: { title: string; url: string }[] } | null>(null)
+  const [hotspots, setHotspots] = useState<HotspotPayload | null>(null)
   const [hotspotError, setHotspotError] = useState<string | null>(null)
   const [topicVotes, setTopicVotes] = useState<Record<string, 'YES' | 'NO'>>({})
   const { user, isAuthenticated, logout } = useAuth()
@@ -45,9 +52,15 @@ function MarketsPage() {
           return res.json()
         })
         .then((data) => {
+          const fallbackGeneral = data.polymarket || data.english || []
+          const fallbackEntertainment = data.weibo || data.chinese || []
           setHotspots({
-            polymarket: data.polymarket || data.english || [],
-            weibo: data.weibo || data.chinese || [],
+            categories: {
+              general: data?.categories?.general || fallbackGeneral.slice(0, 2),
+              tech: data?.categories?.tech || fallbackGeneral.slice(0, 2),
+              entertainment: data?.categories?.entertainment || fallbackEntertainment.slice(0, 2),
+            },
+            all: data?.all || [],
           })
           setHotspotError(null)
         })
@@ -137,7 +150,7 @@ function MarketsPage() {
             <span>Latest</span>
           </div>
           <ul>
-            {(hotspots?.polymarket || []).slice(0, 3).map((item, idx) => (
+            {(hotspots?.categories?.general || []).slice(0, 3).map((item, idx) => (
               <li key={`news-${idx}`}>
                 <a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
               </li>
@@ -156,65 +169,41 @@ function MarketsPage() {
         {!hotspotError && !hotspots && <p className="hotspots-loading">{t('hotspots.loading')}</p>}
         {hotspots && (
           <div className="hotspots-grid-rows">
-            <div className="hotspot-row">
-              <h3>{t('hotspots.polymarket')}</h3>
-              <div className="hotspot-cards">
-                {hotspots.polymarket.slice(0, 3).map((item, idx) => {
-                  const voteKey = `poly-${idx}-${item.title}`
-                  const selected = topicVotes[voteKey]
-                  return (
-                    <article key={`poly-${idx}`} className="hotspot-card">
-                      <span className="hotspot-rank">#{idx + 1}</span>
-                      <a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
-                      <div className="topic-vote-actions">
-                        <button
-                          className={`btn-up ${selected === 'YES' ? 'selected' : ''}`}
-                          onClick={(e) => onVoteTopic(e, voteKey, 'YES', item.url)}
-                        >
-                          {t('hotspots.yes')}
-                        </button>
-                        <button
-                          className={`btn-down ${selected === 'NO' ? 'selected' : ''}`}
-                          onClick={(e) => onVoteTopic(e, voteKey, 'NO', item.url)}
-                        >
-                          {t('hotspots.no')}
-                        </button>
-                      </div>
-                    </article>
-                  )
-                })}
-              </div>
-            </div>
-
-            <div className="hotspot-row">
-              <h3>{t('hotspots.weibo')}</h3>
-              <div className="hotspot-cards">
-                {hotspots.weibo.slice(0, 3).map((item, idx) => {
-                  const voteKey = `weibo-${idx}-${item.title}`
-                  const selected = topicVotes[voteKey]
-                  return (
-                    <article key={`weibo-${idx}`} className="hotspot-card">
-                      <span className="hotspot-rank">#{idx + 1}</span>
-                      <a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
-                      <div className="topic-vote-actions">
-                        <button
-                          className={`btn-up ${selected === 'YES' ? 'selected' : ''}`}
-                          onClick={(e) => onVoteTopic(e, voteKey, 'YES', item.url)}
-                        >
-                          {t('hotspots.yes')}
-                        </button>
-                        <button
-                          className={`btn-down ${selected === 'NO' ? 'selected' : ''}`}
-                          onClick={(e) => onVoteTopic(e, voteKey, 'NO', item.url)}
-                        >
-                          {t('hotspots.no')}
-                        </button>
-                      </div>
-                    </article>
-                  )
-                })}
-              </div>
-            </div>
+            {hotspotCategoryKeys.map((groupKey) => {
+              const groupItems = hotspots.categories[groupKey] || []
+              return (
+                <div className="hotspot-row" key={groupKey}>
+                  <h3>{t(`hotspots.categories.${groupKey}`)}</h3>
+                  <div className="hotspot-cards hotspot-cards-2col">
+                    {groupItems.slice(0, 2).map((item, idx) => {
+                      const voteKey = `${groupKey}-${idx}-${item.title}`
+                      const selected = topicVotes[voteKey]
+                      return (
+                        <article key={`${groupKey}-${idx}`} className="hotspot-card">
+                          <span className="hotspot-rank">#{idx + 1}</span>
+                          <a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
+                          <div className="topic-meta">{item.board || item.source || 'TopHub'}</div>
+                          <div className="topic-vote-actions">
+                            <button
+                              className={`btn-up ${selected === 'YES' ? 'selected' : ''}`}
+                              onClick={(e) => onVoteTopic(e, voteKey, 'YES', item.url)}
+                            >
+                              {t('hotspots.yes')}
+                            </button>
+                            <button
+                              className={`btn-down ${selected === 'NO' ? 'selected' : ''}`}
+                              onClick={(e) => onVoteTopic(e, voteKey, 'NO', item.url)}
+                            >
+                              {t('hotspots.no')}
+                            </button>
+                          </div>
+                        </article>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })}
           </div>
         )}
       </section>

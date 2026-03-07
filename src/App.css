@@ -51,9 +51,11 @@ nav a { cursor: pointer; }
 .hotspot-row { background: #0a1020; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
 .hotspot-row h3 { margin: 0 0 10px; color: #8bbcff; font-size: 14px; }
 .hotspot-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.hotspot-card { background: #0c1325; border: 1px solid var(--line); border-radius: 10px; padding: 10px; min-height: 76px; display: flex; flex-direction: column; gap: 6px; }
+.hotspot-cards.hotspot-cards-2col { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.hotspot-card { background: #0c1325; border: 1px solid var(--line); border-radius: 10px; padding: 10px; min-height: 92px; display: flex; flex-direction: column; gap: 6px; }
 .hotspot-rank { color: #8bbcff; font-size: 12px; font-weight: 700; }
 .hotspot-card a { color: var(--text); text-decoration: none; font-size: 14px; line-height: 1.35; }
+.topic-meta { margin-top: auto; color: var(--muted); font-size: 12px; }
 .hotspot-card a:hover { text-decoration: underline; }
 .topic-vote-actions { display: flex; gap: 8px; margin-top: auto; padding-top: 8px; }
 .topic-vote-actions button { flex: 1; border: 1px solid var(--line); color: #fff; border-radius: 8px; padding: 8px; font-weight: 600; cursor: pointer; }

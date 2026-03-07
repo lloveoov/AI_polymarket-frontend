@@ -36,9 +36,12 @@
   },
   "hotspots": {
     "title": "Hotspot Prediction",
-    "dailyUpdate": "Updated daily",
-    "polymarket": "Polymarket Top 3",
-    "weibo": "Sina Weibo Top 3",
+    "dailyUpdate": "Auto-refresh at 08:00 / 20:00 Europe time",
+    "categories": {
+      "general": "General (2 random)",
+      "tech": "Tech (2 random)",
+      "entertainment": "Entertainment (2 random)"
+    },
     "yes": "Yes",
     "no": "No",
     "loading": "Loading hotspots...",

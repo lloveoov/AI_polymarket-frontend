@@ -36,9 +36,12 @@
   },
   "hotspots": {
     "title": "热点预测",
-    "dailyUpdate": "每日更新",
-    "polymarket": "Polymarket 热点 Top 3",
-    "weibo": "新浪微博热榜 Top 3",
+    "dailyUpdate": "欧洲时间 08:00 / 20:00 自动更新",
+    "categories": {
+      "general": "综合类（随机2个）",
+      "tech": "科技类（随机2个）",
+      "entertainment": "娱乐类（随机2个）"
+    },
     "yes": "看涨",
     "no": "看跌",
     "loading": "热点加载中...",

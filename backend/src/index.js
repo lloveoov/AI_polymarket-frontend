@@ -25,6 +25,7 @@ const ADMIN_USERS = [
 
 const HOTSPOT_CACHE = {
   date: null,
+  slotKey: null,
   payload: null,
   updatedAt: null,
 };
@@ -48,112 +49,188 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-function todayKey() {
-  return new Date().toISOString().slice(0, 10);
+function amsterdamNowParts(date = new Date()) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Amsterdam',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).formatToParts(date);
+
+  const get = (type) => parts.find((p) => p.type === type)?.value || '';
+  return {
+    dateKey: `${get('year')}-${get('month')}-${get('day')}`,
+    hour: Number(get('hour') || 0),
+    minute: Number(get('minute') || 0),
+  };
 }
 
-async function fetchPolymarketTop(limit = 3) {
-  try {
-    const url =
-      `https://gamma-api.polymarket.com/markets?active=true&closed=false&archived=false&limit=${Math.max(limit * 3, 20)}&offset=0`;
-    const res = await fetch(url, { headers: { accept: 'application/json' } });
-    if (!res.ok) throw new Error(`Polymarket status ${res.status}`);
-    const rows = await res.json();
-
-    const sorted = [...rows]
-      .sort((a, b) => Number(b.volume || 0) - Number(a.volume || 0))
-      .slice(0, limit)
-      .map((m) => ({
-        title: m.question || m.title || 'Unknown topic',
-        source: 'Polymarket',
-        url: m.slug ? `https://polymarket.com/event/${m.slug}` : 'https://polymarket.com',
-      }));
-
-    return sorted;
-  } catch (err) {
-    console.error('fetchPolymarketTop failed:', err.message);
-    return Array.from({ length: limit }).map((_, i) => ({
-      title: `Polymarket trend unavailable #${i + 1}`,
-      source: 'Polymarket',
-      url: 'https://polymarket.com',
-    }));
-  }
+function htmlDecode(input = '') {
+  return input
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&#x2F;/g, '/');
 }
 
-async function fetchChineseTop3() {
-  try {
-    // Weibo hot search list as practical "微热点" source
-    const url = 'https://weibo.com/ajax/side/hotSearch';
-    const res = await fetch(url, {
-      headers: {
-        accept: 'application/json',
-        'user-agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36',
-      },
-    });
-    if (!res.ok) throw new Error(`Weibo status ${res.status}`);
-    const data = await res.json();
+function stripHtml(input = '') {
+  return htmlDecode(input.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim());
+}
 
-    const list = (data?.data?.realtime || [])
-      .slice(0, 3)
-      .map((x) => ({
-        title: x.note || x.word || '未知热点',
-        source: '微热点',
-        url: x.word ? `https://s.weibo.com/weibo?q=${encodeURIComponent(x.word)}` : 'https://weibo.com',
-      }));
-
-    if (list.length < 3) throw new Error('insufficient chinese topics');
-    return list;
-  } catch (err) {
-    console.error('fetchChineseTop3 failed:', err.message);
-    return [
-      { title: '微热点暂不可用 #1', source: '微热点', url: 'https://weibo.com' },
-      { title: '微热点暂不可用 #2', source: '微热点', url: 'https://weibo.com' },
-      { title: '微热点暂不可用 #3', source: '微热点', url: 'https://weibo.com' },
-    ];
+function shuffle(arr = []) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
   }
+  return copy;
+}
+
+function inferCategory(board = '', title = '') {
+  const text = `${board} ${title}`;
+  if (/娱乐|影视|明星|综艺|音乐|电影|电视剧|偶像|粉丝|票房/i.test(text)) {
+    return 'entertainment';
+  }
+  if (/科技|AI|人工智能|开发|程序|数码|芯片|开源|GitHub|机器学习|模型|技术/i.test(text)) {
+    return 'tech';
+  }
+  return 'general';
+}
+
+function fallbackTopics(categoryLabel, count = 2) {
+  return Array.from({ length: count }).map((_, i) => ({
+    title: `${categoryLabel}热点抓取中 #${i + 1}`,
+    url: 'https://tophub.today',
+    source: 'TopHub',
+    board: categoryLabel,
+  }));
+}
+
+function parseTophubTopics(html) {
+  const cardRegex = /<div class="cc-cd"[\s\S]*?<div class="cc-cd-lb">[\s\S]*?<span>\s*([^<]+?)\s*<\/span>[\s\S]*?<span class="cc-cd-sb-st">\s*([^<]+?)\s*<\/span>[\s\S]*?<div class="cc-cd-cb-l[^>]*>([\s\S]*?)<\/div>\s*<\/div>/g;
+  const topicByCategory = { general: [], tech: [], entertainment: [] };
+
+  let cardMatch;
+  while ((cardMatch = cardRegex.exec(html)) !== null) {
+    const boardName = stripHtml(cardMatch[1]);
+    const boardSub = stripHtml(cardMatch[2]);
+    const listHtml = cardMatch[3] || '';
+
+    const itemRegex = /<a href="([^"]+)"[^>]*>[\s\S]*?<span class="t">([\s\S]*?)<\/span>/g;
+    let itemMatch;
+
+    while ((itemMatch = itemRegex.exec(listHtml)) !== null) {
+      const url = htmlDecode(itemMatch[1]);
+      const title = stripHtml(itemMatch[2]);
+      if (!title || !url) continue;
+
+      const category = inferCategory(`${boardName} ${boardSub}`, title);
+      topicByCategory[category].push({
+        title,
+        url: url.startsWith('http') ? url : `https://tophub.today${url}`,
+        source: 'TopHub',
+        board: `${boardName} · ${boardSub}`,
+      });
+    }
+  }
+
+  return topicByCategory;
+}
+
+async function fetchTophubByCategory() {
+  const res = await fetch('https://tophub.today', {
+    headers: {
+      accept: 'text/html,application/xhtml+xml',
+      'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126 Safari/537.36',
+    },
+  });
+  if (!res.ok) throw new Error(`TopHub status ${res.status}`);
+  const html = await res.text();
+  return parseTophubTopics(html);
+}
+
+function getCurrentSlotKey() {
+  const now = amsterdamNowParts();
+  if (now.hour >= 20) return `${now.dateKey}-20`;
+  if (now.hour >= 8) return `${now.dateKey}-08`;
+  return `${now.dateKey}-pre08`;
+}
+
+function shouldRunScheduleNow() {
+  const now = amsterdamNowParts();
+  const inMorningWindow = now.hour === 8 && now.minute <= 10;
+  const inEveningWindow = now.hour === 20 && now.minute <= 10;
+  return inMorningWindow || inEveningWindow;
 }
 
 async function buildHotspots() {
-  const [polymarketTop3, weiboTop3] = await Promise.all([
-    fetchPolymarketTop(3),
-    fetchChineseTop3(),
-  ]);
+  let grouped = { general: [], tech: [], entertainment: [] };
+
+  try {
+    grouped = await fetchTophubByCategory();
+  } catch (err) {
+    console.error('fetchTophubByCategory failed:', err.message);
+  }
+
+  const general = shuffle(grouped.general).slice(0, 2);
+  const tech = shuffle(grouped.tech).slice(0, 2);
+  const entertainment = shuffle(grouped.entertainment).slice(0, 2);
+
+  const normalized = {
+    general: general.length ? general : fallbackTopics('综合', 2),
+    tech: tech.length ? tech : fallbackTopics('科技', 2),
+    entertainment: entertainment.length ? entertainment : fallbackTopics('娱乐', 2),
+  };
+
+  const all = [...normalized.general, ...normalized.tech, ...normalized.entertainment];
 
   return {
-    date: todayKey(),
+    date: amsterdamNowParts().dateKey,
+    slotKey: getCurrentSlotKey(),
     updatedAt: new Date().toISOString(),
-    polymarket: polymarketTop3,
-    weibo: weiboTop3,
-    // Backward compatibility for existing frontend fields
-    english: polymarketTop3,
-    chinese: weiboTop3,
-    all: [...polymarketTop3, ...weiboTop3],
+    categories: normalized,
+    all,
+    // backward-compatible fields used by old frontend
+    polymarket: [...normalized.general, ...normalized.tech].slice(0, 3),
+    weibo: [...normalized.entertainment, ...normalized.general].slice(0, 3),
   };
 }
 
 async function getDailyHotspots() {
-  const currentDay = todayKey();
-  if (HOTSPOT_CACHE.payload && HOTSPOT_CACHE.date === currentDay) {
+  if (HOTSPOT_CACHE.payload) {
     return HOTSPOT_CACHE.payload;
   }
 
   const payload = await buildHotspots();
-  HOTSPOT_CACHE.date = currentDay;
+  HOTSPOT_CACHE.date = payload.date;
   HOTSPOT_CACHE.payload = payload;
   HOTSPOT_CACHE.updatedAt = payload.updatedAt;
+  HOTSPOT_CACHE.slotKey = payload.slotKey;
   return payload;
 }
 
-// Background refresh check every hour; only refreshes on date change.
 setInterval(async () => {
-  const currentDay = todayKey();
-  if (HOTSPOT_CACHE.date !== currentDay) {
-    HOTSPOT_CACHE.payload = await buildHotspots();
-    HOTSPOT_CACHE.date = currentDay;
-    HOTSPOT_CACHE.updatedAt = HOTSPOT_CACHE.payload.updatedAt;
+  try {
+    if (!shouldRunScheduleNow()) return;
+
+    const slotKey = getCurrentSlotKey();
+    if (HOTSPOT_CACHE.slotKey === slotKey) return;
+
+    const payload = await buildHotspots();
+    HOTSPOT_CACHE.date = payload.date;
+    HOTSPOT_CACHE.payload = payload;
+    HOTSPOT_CACHE.updatedAt = payload.updatedAt;
+    HOTSPOT_CACHE.slotKey = payload.slotKey;
+    console.log(`[hotspots] refreshed for slot=${payload.slotKey}`);
+  } catch (err) {
+    console.error('[hotspots] scheduled refresh failed:', err.message);
   }
-}, 60 * 60 * 1000);
+}, 60 * 1000);
 
 app.get('/health', (req, res) => {
   res.json({
